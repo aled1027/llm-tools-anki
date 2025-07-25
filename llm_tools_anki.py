@@ -1,6 +1,7 @@
 import json
 import llm
 import httpx
+import os
 
 
 class Anki(llm.Toolbox):
@@ -18,6 +19,55 @@ class Anki(llm.Toolbox):
         Sets up the connection URL to the local AnkiConnect instance.
         """
         self.url = "http://localhost:8765"
+        self.unsplash_access_key = llm.get_key(
+            explicit_key="unsplash", key_alias="unsplash", env_var="UNSPLASH_ACCESS_KEY"
+        )
+
+    def get_image_url(self, query: str) -> str:
+        """
+        Get a random image URL from Unsplash using the official API.
+
+        Args:
+            query (str): Search query for the image
+
+        Returns:
+            str: URL of a random image matching the query, or fallback URL if API fails
+
+        Note:
+            Requires UNSPLASH_ACCESS_KEY environment variable to be set.
+            Falls back to the old random URL method if API key is not available.
+        """
+        if not self.unsplash_access_key:
+            # Fallback to the old method if no API key is provided
+            return f"https://source.unsplash.com/random/800x600/?{query}"
+
+        try:
+            headers = {
+                "Authorization": f"Client-ID {self.unsplash_access_key}",
+                "Accept-Version": "v1",
+            }
+
+            params = {"query": query, "per_page": 1, "orientation": "landscape"}
+
+            response = httpx.get(
+                "https://api.unsplash.com/photos/random",
+                headers=headers,
+                params=params,
+                timeout=10.0,
+            )
+            response.raise_for_status()
+
+            data = response.json()
+            if data and "urls" in data:
+                # Return the regular size URL (800x600 equivalent)
+                return data["urls"]["regular"]
+            else:
+                # Fallback if no image found
+                return f"https://source.unsplash.com/random/800x600/?{query}"
+
+        except Exception as e:
+            # Fallback to the old method if API call fails
+            return f"https://source.unsplash.com/random/800x600/?{query}"
 
     def query(self, request: str) -> str:
         """
