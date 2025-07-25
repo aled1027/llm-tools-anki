@@ -24,4 +24,5 @@ To set up this plugin locally, first checkout the code. Then use [uv](https://as
 
 ```bash
 uv sync --all-extras
+uv run python -m pip install -e '.[test]'
 ```
