@@ -39,7 +39,7 @@ class Anki(llm.Toolbox):
         """
         if not self.unsplash_access_key:
             # Fallback to the old method if no API key is provided
-            return f"https://source.unsplash.com/random/800x600/?{query}"
+            return f"https://source.unsplash.com/random/400x300/?{query}"
 
         try:
             headers = {
@@ -60,14 +60,14 @@ class Anki(llm.Toolbox):
             data = response.json()
             if data and "urls" in data:
                 # Return the regular size URL (800x600 equivalent)
-                return data["urls"]["regular"]
+                return data["urls"]["small"]
             else:
                 # Fallback if no image found
-                return f"https://source.unsplash.com/random/800x600/?{query}"
+                return f"https://source.unsplash.com/random/400x300/?{query}"
 
         except Exception as e:
             # Fallback to the old method if API call fails
-            return f"https://source.unsplash.com/random/800x600/?{query}"
+            return f"https://source.unsplash.com/random/400x300/?{query}"
 
     def query(self, request: str) -> str:
         """
