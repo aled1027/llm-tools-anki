@@ -26,6 +26,10 @@ llm -T Anki "my friend miguel loves learning about languages. find a cool card t
 llm -T Anki "Add 5 new cards to the default deck. The five cards should ask about the colors in spanish for a language learning student" --td --chain-limit 25
 ```
 
+```bash
+llm -T Anki -T web_search "I'm interviewing with Miguel Conner for a data science position in a few hours. Research him and create a few anki cards in my default deck for me to study." --td --chain-limit 50
+```
+
 ## Development
 
 To set up this plugin locally, first checkout the code. Then use [uv](https://astral.sh/)
