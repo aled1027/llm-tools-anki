@@ -41,7 +41,11 @@ class Anki(llm.Toolbox):
             response.raise_for_status()
             result = response.json()
             if result.get("error"):
-                return f"Error: {result.get('error')}"
+                err_msg = (
+                    "There was an error. If you want to check the docs, use the Anki_docs tool. "
+                    f"This was the error message: {result.get('error')}"
+                )
+                return err_msg
             return json.dumps(result.get("result", {}))
         except Exception as ex:
             return f"Error: {ex}"

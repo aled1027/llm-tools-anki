@@ -23,7 +23,7 @@ llm -T Anki "my friend miguel loves learning about languages. find a cool card t
 ```
 
 ```bash
-llm -T Anki "build a new deck called miguel that 5 very very basic spanish language cards for a spanish language learner" --td --chain-limit 100
+llm -T Anki "Add 5 new cards to the default deck. The five cards should ask about the colors in spanish for a language learning student" --td --chain-limit 25
 ```
 
 ## Development
