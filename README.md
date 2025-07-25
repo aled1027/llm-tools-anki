@@ -18,6 +18,14 @@ llm install llm-tools-anki
 llm -T Anki "4444 * 233423" --td
 ```
 
+```bash
+llm -T Anki "my friend miguel loves learning about languages. find a cool card that I can share with him that I've been studying." --td
+```
+
+```bash
+llm -T Anki "build a new deck called miguel that 5 very very basic spanish language cards for a spanish language learner" --td --chain-limit 100
+```
+
 ## Development
 
 To set up this plugin locally, first checkout the code. Then use [uv](https://astral.sh/)
@@ -41,3 +49,4 @@ Docs adapted from README in https://github.com/amikey/anki-connect.
 - [Simon's blog post llm tools](https://simonwillison.net/2025/May/27/llm-tools/)
 - [llm-tools-sqlite](https://github.com/simonw/llm-tools-sqlite/tree/main) (for reference code)
 - [anki-connect-mcp](https://github.com/spacholski1225/anki-connect-mcp)
+- [discord message on --chain-limit](https://discord.com/channels/823971286308356157/1128504153841336370/1388261616583442502)
