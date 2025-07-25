@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [{ name = "Alex Ledger" }]
 license = "Apache-2.0"
 classifiers = []
-requires-python = ">=3.12"
+requires-python = ">=3.9"
 dependencies = ["httpx>=0.28.1", "llm"]
 
 
@@ -24,4 +24,4 @@ CI = "https://github.com/aled102/llm-tools-anki/actions"
 tools_anki = "llm_tools_anki"
 
 [project.optional-dependencies]
-test = ["pytest", "llm-echo>=0.3a1", "llm-tools-exa"]
+test = ["pytest", "llm-echo>=0.3a1"]
