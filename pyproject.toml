@@ -1,7 +1,27 @@
 [project]
 name = "llm-tools-anki"
 version = "0.1.0"
-description = "Add your description here"
+description = "Manage Anki cards with the LLM tool"
 readme = "README.md"
+authors = [{ name = "Alex Ledger" }]
+license = "Apache-2.0"
+classifiers = []
 requires-python = ">=3.12"
-dependencies = []
+dependencies = ["llm"]
+
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+Homepage = "https://github.com/aled102/llm-tools-anki"
+Changelog = "https://github.com/aled102/llm-tools-anki/releases"
+Issues = "https://github.com/aled102/llm-tools-anki/issues"
+CI = "https://github.com/aled102/llm-tools-anki/actions"
+
+[project.entry-points.llm]
+tools_anki = "llm_tools_anki"
+
+[project.optional-dependencies]
+test = ["pytest", "llm-echo>=0.3a1"]
