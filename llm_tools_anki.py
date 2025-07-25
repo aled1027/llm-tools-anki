@@ -1,16 +1,18 @@
+import json
 import llm
 
 
-def anki(expression: str) -> str:
-    """
-    Evaluate a simple expression using the simpleeval library.
-    """
-    try:
-        return "hello world from anki: " + expression
-    except Exception as e:
-        return f"Error: {str(e)}"
+class Anki(llm.Toolbox):
+    def __init__(self):
+        pass
+
+    def query(self, expression: str) -> str:
+        try:
+            return "hello world from anki: " + expression
+        except Exception as ex:
+            return f"Error: {ex}"
 
 
 @llm.hookimpl
 def register_tools(register):
-    register(anki)
+    register(Anki)

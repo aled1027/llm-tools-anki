@@ -26,3 +26,9 @@ To set up this plugin locally, first checkout the code. Then use [uv](https://as
 uv sync --all-extras
 uv run python -m pip install -e '.[test]'
 ```
+
+## How It Works
+
+[AnkiConnect](https://ankiweb.net/shared/info/2055492159) enables external applications to interact with Anki. With it, we can read cards, update cards, add cards, delete cards and manage decks.j
+
+Also: https://foosoft.net/projects/anki-connect
