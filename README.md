@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/aled1027/llm-tools-anki/blob/main/LICENSE)
 
-Manage Anki cards with the LLM tool
+Manage Anki cards with the LLM tool.
 
 ## Installation
 
@@ -15,7 +15,7 @@ llm install llm-tools-anki
 ## Usage
 
 ```bash
-llm -T anki "4444 * 233423" --td
+llm -T Anki "4444 * 233423" --td
 ```
 
 ## Development
@@ -32,3 +32,12 @@ uv run python -m pip install -e '.[test]'
 [AnkiConnect](https://ankiweb.net/shared/info/2055492159) enables external applications to interact with Anki. With it, we can read cards, update cards, add cards, delete cards and manage decks.j
 
 Also: https://foosoft.net/projects/anki-connect
+
+Docs adapted from README in https://github.com/amikey/anki-connect.
+
+## Additional Resources
+
+- [Homepage for AnkiConnect](https://foosoft.net/projects/anki-connect)
+- [Simon's blog post llm tools](https://simonwillison.net/2025/May/27/llm-tools/)
+- [llm-tools-sqlite](https://github.com/simonw/llm-tools-sqlite/tree/main) (for reference code)
+- [anki-connect-mcp](https://github.com/spacholski1225/anki-connect-mcp)

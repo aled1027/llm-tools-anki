@@ -230,6 +230,7 @@ name = "llm-tools-anki"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "httpx" },
     { name = "llm" },
 ]
 
@@ -241,6 +242,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "llm" },
     { name = "llm-echo", marker = "extra == 'test'", specifier = ">=0.3a1" },
     { name = "pytest", marker = "extra == 'test'" },
