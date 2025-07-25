@@ -6,15 +6,15 @@ import httpx
 class Anki(llm.Toolbox):
     """
     A toolbox for interacting with Anki through AnkiConnect API.
-    
+
     This class provides methods to query Anki's database and retrieve documentation
     through the AnkiConnect HTTP API running on localhost:8765.
     """
-    
+
     def __init__(self):
         """
         Initialize the Anki toolbox with the default AnkiConnect URL.
-        
+
         Sets up the connection URL to the local AnkiConnect instance.
         """
         self.url = "http://localhost:8765"
@@ -22,15 +22,15 @@ class Anki(llm.Toolbox):
     def query(self, request: str) -> str:
         """
         Send a query to the AnkiConnect API.
-        
+
         Args:
             request (str): A JSON string containing the API request parameters.
                           Should include 'action' and other required fields.
-        
+
         Returns:
             str: JSON string containing the API response result, or error message
                  if the request fails.
-        
+
         Example:
             >>> anki = Anki()
             >>> result = anki.query('{"action": "version", "version": 6}')
@@ -49,10 +49,10 @@ class Anki(llm.Toolbox):
     def docs(self) -> str:
         """
         Retrieve the AnkiConnect API documentation.
-        
+
         Returns:
             str: The contents of the ankiconnect.md documentation file.
-        
+
         Note:
             This method reads the documentation from the 'ankiconnect.md' file
             in the current directory.
@@ -63,10 +63,10 @@ class Anki(llm.Toolbox):
     # def schema(self) -> str:
     #     """
     #     Get the API schema by calling the apiReflect action.
-    #     
+    #
     #     This method retrieves the available actions and their parameters
     #     from the AnkiConnect API.
-    #     
+    #
     #     Returns:
     #         str: JSON string containing the API schema, or error message
     #              if the request fails.
@@ -93,7 +93,7 @@ class Anki(llm.Toolbox):
 def register_tools(register):
     """
     Register the Anki toolbox with the LLM framework.
-    
+
     Args:
         register: The registration function provided by the LLM framework.
     """
