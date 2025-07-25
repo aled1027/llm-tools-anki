@@ -15,10 +15,6 @@ llm install llm-tools-anki
 ## Usage
 
 ```bash
-llm -T Anki "4444 * 233423" --td
-```
-
-```bash
 llm -T Anki "my friend miguel loves learning about languages. find a cool card that I can share with him that I've been studying." --td
 ```
 
@@ -29,6 +25,16 @@ llm -T Anki "Add 5 new cards to the default deck. The five cards should ask abou
 ```bash
 llm -T Anki -T web_search "I'm interviewing with Miguel Conner for a data science position in a few hours. Research him and create a few anki cards in my default deck for me to study." --td --chain-limit 50
 ```
+
+```bash
+llm -T Anki "Take the cards in the Evolve deck and adjust them. Make the cards similar, basically testing the same ideas, but make them different to keep the learning interesting and engaging for the learner. Remove any cards that you evolve" --td --chain-limit 50
+```
+
+````bash
+llm -T Anki "My friend catdog thinks I don't know big words. Add 5 to 10 cards of big words that I should know so I'm not embarrassed. Add these to the default deck." --td --chain-limit 50
+```
+
+
 
 ## Development
 
