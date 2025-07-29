@@ -14,6 +14,12 @@ llm install llm-tools-anki
 
 ## Usage
 
+I've primarily used the tool with Chatgpt's 4o which can be set to the default llm model with:
+
+```bash
+llm models default 4o
+```
+
 ```bash
 llm -T Anki "my friend miguel loves learning about languages. find a cool card that I can share with him that I've been studying." --td
 ```
@@ -40,6 +46,27 @@ An unsplash access key needs to be set for the following prompt with `llm keys s
 
 ```bash
 llm -T Anki "For each anki card in the evolve deck without an image (ignore cards with images), use Anki_get_image_url to add an image. Make it visible in the front or back of the card, whichever makes more sense for that card. Make sure that the card is formatted as HTML (not markdown) or the image won't render correctly. The goal of the image is to increase visual appeal and improve memory retention." --td --chain-limit 50
+```
+
+The next prompt comes from [Miguel Conner](https://substack.com/@miguelconner/posts). It's a good example of informing the llm how to format code in cards:
+
+```bash
+llm -T Anki "
+Create Anki flashcards for my 'pytorch' deck with these requirements:
+- Use HTML formatting only (no markdown). Code blocks should use <pre><code>...</code></pre>
+- Each card should test ONE atomic concept
+- Include one comprehensive card at the end that tests understanding of the complete structure
+
+Topic: PyTorch fundamentals and boilerplate code
+
+Focus areas:
+1. Basic neural network class structure
+2. Essential imports and setup
+3. Forward pass implementation
+4. Training loop components
+
+Create cards that help memorize the fundamental patterns and syntax needed to build PyTorch models from scratch.
+" --chain-limit 50
 ```
 
 ## Development
