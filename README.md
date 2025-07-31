@@ -67,6 +67,12 @@ Focus areas:
 
 Create cards that help memorize the fundamental patterns and syntax needed to build PyTorch models from scratch.
 " --chain-limit 50
+
+llm -T Anki "
+Replace the front of the card in the evolve deck with an audio version of its current front text.
+" --chain-limit 50 --td
+
+llm -T Anki "Create a new card in the evolve deck based on the existing card. This new card should have the front of the card replaced with audio speaking the same content. If audio was generated, pass to add_note with use_front_from_file. When you call generate audio, try to pass the appropriate language code. If passing audio to add_note, dont include it in front, just use use_front_from_file." --chain-limit 50 --td
 ```
 
 ## Development
@@ -87,7 +93,17 @@ uv run python -m pip install -e '.[test]'
 - [Homepage for AnkiConnect](https://foosoft.net/projects/anki-connect)
 - [anki-connect-mcp](https://github.com/spacholski1225/anki-connect-mcp)
 
-## Additional Notes
+## Text-to-Speech (TTS) Support
 
-- Thanks to Anki and AnkiConnect for their amazing work
-- The file `ankiconnect.md` is an exerpt from [anki-connect readme](https://github.com/amikey/anki-connect)
+This plugin supports multiple TTS providers for generating audio content for Anki cards:
+
+### Gemini TTS (Google Text-to-Speech)
+
+To use Gemini TTS, you need to:
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Select your project
+3. Go to API & Services > Credentials, generate an API key
+4. Give the API key access to all services
+5. Enable the [Text-to-Speech API](https://console.cloud.google.com/apis/library/texttospeech.googleapis.com)
+6. Set the API key: `llm keys set gemini`
