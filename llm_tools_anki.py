@@ -5,7 +5,6 @@ import hashlib
 import time
 import base64
 import tempfile
-import os
 
 
 class Anki(llm.Toolbox):
@@ -40,7 +39,7 @@ class Anki(llm.Toolbox):
             explicit_key="gemini", key_alias="gemini", env_var="GEMINI_API_KEY"
         )
 
-        self.replicate_api_key = None  # TODO: remove this 
+        self.replicate_api_key = None  # TODO: remove this
         self.openai_api_key = None  # TODO: remove this
 
     def get_image_url(self, query: str) -> str:
@@ -85,7 +84,7 @@ class Anki(llm.Toolbox):
                 # Fallback if no image found
                 return f"https://source.unsplash.com/random/400x300/?{query}"
 
-        except Exception as e:
+        except Exception:
             # Fallback to the old method if API call fails
             return f"https://source.unsplash.com/random/400x300/?{query}"
 
@@ -485,14 +484,6 @@ class Anki(llm.Toolbox):
             audio_content = result.get("audioContent")
             if not audio_content:
                 return "Error: No audio content in response"
-
-            # Decode the base64 audio data
-            audio_data = base64.b64decode(audio_content)
-
-            # Generate filename
-            text_hash = hashlib.md5(text.encode()).hexdigest()[:8]
-            timestamp = int(time.time())
-            filename = f"tts_gemini_{text_hash}_{timestamp}.wav"
 
             # Create HTML audio element with base64 encoded audio
             audio_html = f'<audio controls><source src="data:audio/wav;base64,{audio_content}" type="audio/wav">Your browser does not support the audio element.</audio>'

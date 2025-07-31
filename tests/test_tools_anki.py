@@ -1,4 +1,3 @@
-import pytest
 import json
 import httpx
 from unittest.mock import patch, Mock
