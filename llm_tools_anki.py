@@ -374,14 +374,7 @@ class Anki(llm.Toolbox):
             text (str): The text to convert to speech.
             language_code (str): Language code (e.g., "en-US", "es-ES", "fr-FR"). Defaults to "en-US".
         """
-        if self.gemini_api_key:
-            return self._generate_audio_with_gemini(text, language_code)
-        elif self.replicate_api_key:
-            return self._generate_audio_with_replicate(text)
-        elif self.openai_api_key:
-            return self._generate_audio_with_openai(text)
-        else:
-            return "Error: No API key found"
+        return self._generate_audio_with_gemini(text, language_code)
 
     def _generate_audio_with_gemini(
         self,
