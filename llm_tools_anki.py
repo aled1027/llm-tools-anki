@@ -11,7 +11,7 @@ class Anki(llm.Toolbox):
     This class provides methods to query Anki's database, retrieve documentation,
     and create notes with audio content through the AnkiConnect HTTP API running on localhost:8765.
 
-    The toolbox includes audio generation capabilities using OpenAI's TTS API, with a file-based
+    The toolbox includes audio generation capabilities using Google's Gemini API, with a file-based
     workflow to prevent flooding the LLM with large audio data. Audio content is generated as
     temporary HTML files that can be referenced when creating notes.
     """
