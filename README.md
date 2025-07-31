@@ -6,88 +6,166 @@ Manage Anki cards with the LLM tool.
 
 ## Installation
 
-Install this plugin in the same environment as [LLM](https://llm.datasette.io/).
-
 ```bash
+# Install the LLM tools Anki plugin
 llm install llm-tools-anki
 ```
 
-## Usage
-
-I've primarily used the tool with Chatgpt's 4o which can be set to the default llm model with:
+## Basic Usage
 
 ```bash
+# Set ChatGPT 4o as your default model (recommended)
 llm models default 4o
+
+# Create your first card
+llm -T Anki "Add a card about photosynthesis to my default deck" --chain-limit 50
 ```
+
+## 📚 Usage Examples
+
+### 🎓 Creating Educational Cards
 
 ```bash
-llm -T Anki "my friend miguel loves learning about languages. find a cool card that I can share with him that I've been studying." --td
+# Language learning cards
+llm -T Anki "Add 5 Spanish color vocabulary cards to my default deck" --chain-limit 50
+
+# Science concepts
+llm -T Anki "Create 3 cards about the water cycle for my science deck" --chain-limit 50
+
+# Programming concepts
+llm -T Anki "Add 4 Python function cards to my coding deck" --chain-limit 50
 ```
+
+### 🎵 Adding Audio to Cards
 
 ```bash
-llm -T Anki "Add 5 new cards to the default deck. The five cards should ask about the colors in spanish for a language learning student" --td --chain-limit 25
+# Generate audio for existing cards
+llm -T Anki "Add audio to all cards in my Spanish deck" --chain-limit 50
+
+# Create new cards with audio
+llm -T Anki "Create 3 French pronunciation cards with audio" --chain-limit 50
 ```
+
+### 🖼️ Adding Images
 
 ```bash
-llm -T Anki "Take the cards in the Evolve deck and adjust them. Make the cards similar, basically testing the same ideas, but make them different to keep the learning interesting and engaging for the learner. Remove any cards that you evolve" --td --chain-limit 50
+# Add images to cards without them
+llm -T Anki "Add relevant images to all cards in my geography deck" --chain-limit 50
+
+# Create cards with images
+llm -T Anki "Create 5 animal cards with images for my biology deck" --chain-limit 50
 ```
+
+### Use Chain Limits for Complex Operations
 
 ```bash
-llm -T Anki "My friend catdog thinks I don't know big words. Add 5 to 10 cards of big words that I should know so I'm not embarrassed. Add these to the default deck." --td --chain-limit 50
+# For operations involving multiple steps
+llm -T Anki "complex operation..." --chain-limit 50
 ```
 
-The follow prompt also requires [llm-tools-exa](https://github.com/daturkel/llm-tools-exa/tree/main) to be installed.
+### Combine with Other LLM Tools
 
 ```bash
-llm -T Anki -T web_search "I'm interviewing with Miguel Conner for a data science position in a few hours. Research him and create a few anki cards in my default deck for me to study." --td --chain-limit 50
+# Use web search for research-based cards
+llm -T Anki -T web_search "Research topic and create cards" --chain-limit 50
 ```
 
-An unsplash access key needs to be set for the following prompt with `llm keys set unsplash`. Access keys can be generate on the unsplash website.
-
-```bash
-llm -T Anki "For each anki card in the evolve deck without an image (ignore cards with images), use Anki_get_image_url to add an image. Make it visible in the front or back of the card, whichever makes more sense for that card. Make sure that the card is formatted as HTML (not markdown) or the image won't render correctly. The goal of the image is to increase visual appeal and improve memory retention." --td --chain-limit 50
-```
-
-The next prompt comes from [Miguel Conner](https://substack.com/@miguelconner/posts). It's a good example of informing the llm how to format code in cards:
+### Specify HTML Formatting for Rich Content
 
 ```bash
 llm -T Anki "
-Create Anki flashcards for my 'pytorch' deck with these requirements:
-- Use HTML formatting only (no markdown). Code blocks should use <pre><code>...</code></pre>
-- Each card should test ONE atomic concept
-- Include one comprehensive card at the end that tests understanding of the complete structure
+Create cards with HTML formatting:
+- Use <b> for bold text
+- Use <pre><code> for code blocks
+- Use <img> for images
+" --chain-limit 30
+```
 
-Topic: PyTorch fundamentals and boilerplate code
+### Use Tags for Organization
 
-Focus areas:
-1. Basic neural network class structure
-2. Essential imports and setup
-3. Forward pass implementation
-4. Training loop components
+```bash
+llm -T Anki "Add cards with tags: biology, chapter1, exam-prep" --chain-limit 50
+```
 
-Create cards that help memorize the fundamental patterns and syntax needed to build PyTorch models from scratch.
+### More Prompts
+
+```bash
+# Evolve and improve existing cards
+llm -T Anki "Take cards in my 'Evolve' deck and make them more engaging while testing the same concepts" --chain-limit 50
+
+# Research-based cards
+llm -T Anki -T web_search "Research quantum computing and create 5 cards for my tech deck" --chain-limit 50
+
+# Bulk card creation with specific formatting
+llm -T Anki "
+Create 10 PyTorch cards for my 'pytorch' deck with these requirements:
+- Use HTML formatting only (no markdown)
+- Code blocks should use <pre><code>...</code></pre>
+- Each card tests ONE atomic concept
+- Include one comprehensive card at the end
 " --chain-limit 50
 ```
 
+## Configuration
+
+### Setting Up Audio Generation (Gemini TTS)
+
+1. **Get a Google Cloud API Key:**
+
+   - Visit [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select existing one
+   - Go to **APIs & Services > Credentials**
+   - Create an API key
+   - Enable **Text-to-Speech API**
+
+2. **Configure the API Key:**
+   ```bash
+   llm keys set gemini YOUR_API_KEY_HERE
+   ```
+
+### Setting Up Image Search (Unsplash)
+
+1. **Get an Unsplash API Key:**
+
+   - Visit [Unsplash Developers](https://unsplash.com/developers)
+   - Create an account and register your application
+   - Get your Access Key
+
+2. **Configure the API Key:**
+   ```bash
+   llm keys set unsplash YOUR_UNSPLASH_ACCESS_KEY
+   ```
+
+## More Example Prompts
+
 ## Development
 
-To set up this plugin locally, first checkout the code. Then use [uv](https://astral.sh/)
+### Local Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/aled1027/llm-tools-anki.git
+cd llm-tools-anki
+
+# Install dependencies with uv
 uv sync --all-extras
 uv run python -m pip install -e '.[test]'
 ```
 
+### Running Tests
+
+```bash
+uv run pytest tests/
+```
+
 ## Additional Resources
 
-- [Simon's blog post llm tools](https://simonwillison.net/2025/May/27/llm-tools/)
-- [llm-tools-sqlite](https://github.com/simonw/llm-tools-sqlite/tree/main) (for reference code)
-- [llm tools cookiecutter template](https://github.com/simonw/llm-plugin-tools)
-- [discord message on --chain-limit](https://discord.com/channels/823971286308356157/1128504153841336370/1388261616583442502)
-- [Homepage for AnkiConnect](https://foosoft.net/projects/anki-connect)
-- [anki-connect-mcp](https://github.com/spacholski1225/anki-connect-mcp)
+- [Simon's LLM Tools Blog Post](https://simonwillison.net/2025/May/27/llm-tools/)
+- [LLM Tools SQLite](https://github.com/simonw/llm-tools-sqlite)
+- [LLM Tools Template](https://github.com/simonw/llm-plugin-tools)
+- [AnkiConnect Documentation](https://foosoft.net/projects/anki-connect)
+- [AnkiConnect MCP](https://github.com/spacholski1225/anki-connect-mcp)
 
-## Additional Notes
+## License
 
-- Thanks to Anki and AnkiConnect for their amazing work
-- The file `ankiconnect.md` is an exerpt from [anki-connect readme](https://github.com/amikey/anki-connect)
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.

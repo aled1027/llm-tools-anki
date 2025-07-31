@@ -1,15 +1,19 @@
 import json
+import tempfile
 import llm
 import httpx
-import os
 
 
 class Anki(llm.Toolbox):
     """
     A toolbox for interacting with Anki through AnkiConnect API.
 
-    This class provides methods to query Anki's database and retrieve documentation
-    through the AnkiConnect HTTP API running on localhost:8765.
+    This class provides methods to query Anki's database, retrieve documentation,
+    and create notes with audio content through the AnkiConnect HTTP API running on localhost:8765.
+
+    The toolbox includes audio generation capabilities using Google's Gemini API, with a file-based
+    workflow to prevent flooding the LLM with large audio data. Audio content is generated as
+    temporary HTML files that can be referenced when creating notes.
     """
 
     def __init__(self):
@@ -21,6 +25,9 @@ class Anki(llm.Toolbox):
         self.url = "http://localhost:8765"
         self.unsplash_access_key = llm.get_key(
             explicit_key="unsplash", key_alias="unsplash", env_var="UNSPLASH_ACCESS_KEY"
+        )
+        self.gemini_api_key = llm.get_key(
+            explicit_key="gemini", key_alias="gemini", env_var="GEMINI_API_KEY"
         )
 
     def get_image_url(self, query: str) -> str:
@@ -65,7 +72,7 @@ class Anki(llm.Toolbox):
                 # Fallback if no image found
                 return f"https://source.unsplash.com/random/400x300/?{query}"
 
-        except Exception as e:
+        except Exception:
             # Fallback to the old method if API call fails
             return f"https://source.unsplash.com/random/400x300/?{query}"
 
@@ -124,28 +131,56 @@ class Anki(llm.Toolbox):
         model_name: str,
         fields: dict,
         tags: list = None,
-        audio: dict = None,
+        use_front_from_file: str = None,
     ) -> str:
         """
         Add a single note to Anki.
 
+        This method creates a new note in the specified deck. The front field content can be
+        loaded from a file using the use_front_from_file parameter, which is particularly useful
+        when working with audio-generated HTML content from the generate_audio method.
+
         Args:
-            deck_name (str): Name of the deck to add the note to
-            model_name (str): Name of the note model (e.g., "Basic", "Cloze")
-            fields (dict): Dictionary of field names and their values
-            tags (list, optional): List of tags to add to the note
-            audio (dict, optional): Audio configuration with url, filename, skipHash, and fields
+            deck_name (str): The name of the deck to add the note to.
+            model_name (str): The name of the note type (model) to use.
+            fields (dict): A dictionary mapping field names to their values.
+                Note: The "Front" and "Back" fields are often HTML strings, not plain text.
+                If use_front_from_file is provided, the "Front" field in this dict will be
+                overridden by the file content.
+            tags (list, optional): A list of tags to assign to the note.
+            use_front_from_file (str, optional): Path to a file containing the front field content.
+                The file content will replace any "Front" field specified in the fields dict.
+                This is useful for loading HTML content with embedded audio from files generated
+                by the generate_audio method.
 
         Returns:
-            str: JSON string containing the note ID if successful, or error message
+            str: JSON string containing the note ID if successful, or an error message.
 
         Example:
             >>> anki = Anki()
+            >>> # Basic note creation
             >>> result = anki.add_note(
             ...     deck_name="Default",
             ...     model_name="Basic",
-            ...     fields={"Front": "What is 2+2?", "Back": "4"},
-            ...     tags=["math", "basic"]
+            ...     fields={"Front": "<b>Capital of Oregon</b>", "Back": "<i>Salem</i>"},
+            ...     tags=["demo"]
+            ... )
+            >>> # Note with front content loaded from file (e.g., audio HTML)
+            >>> result = anki.add_note(
+            ...     deck_name="Default",
+            ...     model_name="Basic",
+            ...     fields={"Back": "Hello world"},
+            ...     tags=["demo"],
+            ...     use_front_from_file="/path/to/front_content.html"
+            ... )
+            >>> # Complete workflow with audio generation
+            >>> audio_file = anki.generate_audio("Capital of Oregon")
+            >>> result = anki.add_note(
+            ...     deck_name="Geography",
+            ...     model_name="Basic",
+            ...     fields={"Back": "Salem"},
+            ...     tags=["geography", "audio"],
+            ...     use_front_from_file=audio_file
             ... )
         """
         note_data = {"deckName": deck_name, "modelName": model_name, "fields": fields}
@@ -153,8 +188,13 @@ class Anki(llm.Toolbox):
         if tags:
             note_data["tags"] = tags
 
-        if audio:
-            note_data["audio"] = audio
+        if use_front_from_file:
+            try:
+                with open(use_front_from_file, "r", encoding="utf-8") as f:
+                    front_content = f.read()
+                note_data["fields"]["Front"] = front_content
+            except Exception as e:
+                return f"Error reading front file: {str(e)}"
 
         request = {"action": "addNote", "version": 5, "params": {"note": note_data}}
 
@@ -321,6 +361,127 @@ class Anki(llm.Toolbox):
         """
         with open("ankiconnect.md", "r") as f:
             return f.read()
+
+    def generate_audio(
+        self,
+        text: str,
+        language_code: str = "en-US",
+    ) -> str:
+        """
+        Generate an audio HTML element from text and write it to a temporary file.
+
+        Args:
+            text (str): The text to convert to speech.
+            language_code (str): Language code (e.g., "en-US", "es-ES", "fr-FR"). Defaults to "en-US".
+        """
+        return self._generate_audio_with_gemini(text, language_code)
+
+    def _generate_audio_with_gemini(
+        self,
+        text: str,
+        language_code: str = "en-US",
+    ) -> str:
+        """
+        Generate an audio HTML element from text using Gemini's TTS API and write it to a temporary file.
+
+        This method converts text to speech using Google's Text-to-Speech API (Gemini), creates an HTML audio element
+        with base64-encoded audio, and writes it to a temporary file. The temporary file persists
+        until manually cleaned up, allowing it to be referenced when creating Anki notes.
+
+        Args:
+            text (str): The text to convert to speech.
+            language_code (str): Language code (e.g., "en-US", "es-ES", "fr-FR"). Defaults to "en-US".
+
+        Returns:
+            str: Path to the temporary file containing the HTML audio element, or an error message
+                 if generation fails. The temporary file contains an HTML <audio> element with
+                 base64-encoded audio that can be embedded in Anki notes.
+
+        Note:
+            Requires the GEMINI_API_KEY environment variable to be set.
+            Temporary files are not automatically cleaned up and should be removed manually
+            when no longer needed to prevent disk space accumulation.
+
+        Example:
+            >>> anki = Anki()
+            >>> # Basic usage
+            >>> audio_file = anki.generate_audio("Hello world")
+            >>> # With specific language
+            >>> audio_file = anki.generate_audio("Buenos dias", "es-ES", "es-ES-Chirp3-HD-Schedar")
+            >>> # Use the returned file path with add_note's use_front_from_file parameter
+            >>> result = anki.add_note(
+            ...     deck_name="Default",
+            ...     model_name="Basic",
+            ...     fields={"Back": "Hello world"},
+            ...     use_front_from_file=audio_file
+            ... )
+
+        """
+        try:
+            # Get Gemini API key from environment
+            if not self.gemini_api_key:
+                return "Error: GEMINI_API_KEY environment variable not set"
+
+            headers = {
+                "Content-Type": "application/json",
+                "x-goog-api-key": self.gemini_api_key,
+            }
+
+            # Set default voice
+            voice_name = "en-US-Neural2-F"
+            if language_code == "en-US":
+                voice_name = "en-US-Neural2-F"
+            elif language_code == "es-ES":
+                voice_name = "es-ES-Neural2-A"
+            elif language_code == "fr-FR":
+                voice_name = "fr-FR-Neural2-A"
+            else:
+                voice_name = f"{language_code}-Neural2-A"
+
+            # Build voice configuration
+            voice_config = {
+                "languageCode": language_code,
+                "name": voice_name,
+            }
+
+            payload = {
+                "input": {"text": text},
+                "voice": voice_config,
+                "audioConfig": {"audioEncoding": "LINEAR16", "speakingRate": 0.85},
+            }
+
+            response = httpx.post(
+                "https://texttospeech.googleapis.com/v1/text:synthesize",
+                headers=headers,
+                json=payload,
+                timeout=30.0,
+            )
+            response.raise_for_status()
+
+            # Get the response data
+            result = response.json()
+
+            # Extract the base64 audio content
+            audio_content = result.get("audioContent")
+            if not audio_content:
+                return "Error: No audio content in response"
+
+            # Create HTML audio element with base64 encoded audio
+            audio_html = f'<audio controls><source src="data:audio/wav;base64,{audio_content}" type="audio/wav">Your browser does not support the audio element.</audio>'
+
+            # Write HTML to temporary file
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".html", delete=False
+            ) as temp_file:
+                temp_file.write(audio_html)
+                temp_file_path = temp_file.name
+
+            return temp_file_path
+
+        except httpx.HTTPStatusError as e:
+            return f"Error: HTTP Error: {e.response.status_code} - {e.response.text}"
+        except Exception as e:
+            return f"Error: {str(e)}"
 
 
 # def schema(self) -> str:
