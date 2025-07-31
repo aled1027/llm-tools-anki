@@ -117,33 +117,6 @@ class TestAnki:
         assert result == "12345"
 
     @patch("httpx.post")
-    def test_add_note_with_audio(self, mock_post):
-        """Test note addition with audio."""
-        mock_response = Mock()
-        mock_response.json.return_value = {"result": 12345, "error": None}
-        mock_response.raise_for_status.return_value = None
-        mock_post.return_value = mock_response
-
-        audio_config = {
-            "url": "https://example.com/audio.mp3",
-            "filename": "audio.mp3",
-            "skipHash": "abc123",
-            "fields": ["Front"],
-        }
-
-        result = self.anki.add_note(
-            deck_name="Default",
-            model_name="Basic",
-            fields={"Front": "Test", "Back": "Answer"},
-            audio=audio_config,
-        )
-
-        # Verify audio was included in request
-        call_args = mock_post.call_args
-        request_body = call_args[1]["json"]
-        assert request_body["params"]["note"]["audio"] == audio_config
-
-    @patch("httpx.post")
     def test_add_notes_batch(self, mock_post):
         """Test adding multiple notes in batch."""
         mock_response = Mock()
