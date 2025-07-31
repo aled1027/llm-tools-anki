@@ -160,11 +160,11 @@ uv run pytest tests/
 
 ## Additional Resources
 
-- [Simon's LLM Tools Blog Post](https://simonwillison.net/2025/May/27/llm-tools/) - Learn about LLM tools
-- [LLM Tools SQLite](https://github.com/simonw/llm-tools-sqlite) - Reference implementation
-- [LLM Tools Template](https://github.com/simonw/llm-plugin-tools) - Create your own tools
-- [AnkiConnect Documentation](https://foosoft.net/projects/anki-connect) - API reference
-- [AnkiConnect MCP](https://github.com/spacholski1225/anki-connect-mcp) - Alternative implementation
+- [Simon's LLM Tools Blog Post](https://simonwillison.net/2025/May/27/llm-tools/)
+- [LLM Tools SQLite](https://github.com/simonw/llm-tools-sqlite)
+- [LLM Tools Template](https://github.com/simonw/llm-plugin-tools)
+- [AnkiConnect Documentation](https://foosoft.net/projects/anki-connect)
+- [AnkiConnect MCP](https://github.com/spacholski1225/anki-connect-mcp)
 
 ## License
 
