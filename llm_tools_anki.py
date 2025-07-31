@@ -368,7 +368,7 @@ class Anki(llm.Toolbox):
         language_code: str = "en-US",
     ) -> str:
         """
-        Generate an audio HTML element from text using OpenAI's TTS API and write it to a temporary file.
+        Generate an audio HTML element from text and write it to a temporary file.
 
         Args:
             text (str): The text to convert to speech.
